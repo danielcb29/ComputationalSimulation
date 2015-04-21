@@ -56,7 +56,7 @@ def graficar():
 			colors.append('#FF0000')
 	custom_style = Style(colors=colors)
 	semaforo_chart = pygal.XY( style=custom_style)
-	semaforo_chart.title = 'Semaforosos'
+	semaforo_chart.title = 'Semaforos'
 	current_semph = 1
 	red_time = 0 #tiempo acumulado en rojo mientras el otro cambia
 	last_time = 0 #tiempo acumulado durante los cambios internos
