@@ -1,5 +1,5 @@
 from Queue import PriorityQueue
-import pygal
+import pygal,random, math
 from pygal.style import Style
 color_1=color_2='Rojo'
 reloj=0
@@ -13,9 +13,11 @@ time_list = []
 def main():
 	global LEF,reloj
 	LEF.put((0,'RV_1'))
+	LEF.put((0,'LCI'))
+	LEF.put((0,'LCD'))
 	reloj = ambosrojo #inicializacion de ambos semaforos en rojo
 	time_list.append((color_1,1,reloj)) #Se entiende que los dos semaforos inician en la fase ambosrojos
-	while reloj<=1000:
+	while reloj<=7200:
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
 	graficar()
@@ -45,6 +47,12 @@ def ejecutar_evento(ev):
 		LEF.put((reloj,'RV_1'))
 		time_list.append((color_2,2,reloj))
 		time_list.append((color_1,1,reloj))
+	elif ev=='LCI':
+		reloj += generar_dato_exponencial(0.05)
+		LEF.put((reloj,'LCI'))
+	elif ev=='LCD':
+		reloj += generar_dato_exponencial(0.05)
+		LEF.put((reloj,'LCD'))
 
 def graficar():
 	global time_list
@@ -84,4 +92,14 @@ def graficar():
 	semaforo_chart.render_to_file('semaforos.svg')
 	print time_list
 
+def generar_dato_exponencial(lam):
+	r = random.random()
+	exp = (1/lam)*(math.log1p(r))
+	return exp
+
+def unit_test_exponential_data():
+	for i in range(0,1000): 
+		print generar_dato_exponencial(0.05) 
+
 main()
+#unit_test_exponential_data()
