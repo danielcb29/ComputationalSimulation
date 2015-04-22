@@ -10,6 +10,8 @@ ambosrojo=50
 faserojo_1= faseverde_2+(2*ambosrojo)
 faserojo_2= faseverde_1+(2*ambosrojo)
 time_list = []
+left_list=[]
+right_list=[]
 def main():
 	global LEF,reloj
 	LEF.put((0,'RV_1'))
@@ -17,6 +19,8 @@ def main():
 	LEF.put((0,'LCD'))
 	reloj = ambosrojo #inicializacion de ambos semaforos en rojo
 	time_list.append((color_1,1,reloj)) #Se entiende que los dos semaforos inician en la fase ambosrojos
+	left_list.appen(0) #primer tiempo de llegada de carro por la izquierda
+	right_list.append(0) #primer tiempo de llegada de carro por la derecha
 	while reloj<=7200:
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
@@ -24,7 +28,7 @@ def main():
 
 def ejecutar_evento(ev):
 	#EV = string of queue
-	global color_2,color_1,LEF,faseverde_1,faseverde_2,ambosrojo,reloj,time_list
+	global color_2,color_1,LEF,faseverde_1,faseverde_2,ambosrojo,reloj,time_list,left_list,right_list
 	if ev=='RV_1':
 		color_1='Verde'
 		reloj=faseverde_1+reloj
@@ -48,11 +52,13 @@ def ejecutar_evento(ev):
 		time_list.append((color_2,2,reloj))
 		time_list.append((color_1,1,reloj))
 	elif ev=='LCI':
-		reloj += generar_dato_exponencial(0.05)
+		reloj += generar_dato_exponencial(0.03130)
 		LEF.put((reloj,'LCI'))
+		left_list.append(reloj)
 	elif ev=='LCD':
-		reloj += generar_dato_exponencial(0.05)
+		reloj += generar_dato_exponencial(0.04585)
 		LEF.put((reloj,'LCD'))
+		right_list.append(reloj)
 
 def graficar():
 	global time_list
@@ -97,9 +103,14 @@ def generar_dato_exponencial(lam):
 	exp = (1/lam)*(math.log1p(r))
 	return exp
 
-def unit_test_exponential_data():
+def unit_test_exponential_data_left():
 	for i in range(0,1000): 
-		print generar_dato_exponencial(0.05) 
+		print generar_dato_exponencial(0.03130)
+
+def unit_test_exponential_data_right():
+	for i in range(0,1000): 
+		print generar_dato_exponencial(0.04585) 
 
 main()
-#unit_test_exponential_data()
+#unit_test_exponential_data_left()
+#unit_test_exponential_data_right()
