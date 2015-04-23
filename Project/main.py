@@ -27,10 +27,10 @@ def main():
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
 	graficar()
-	print 'Tiempos entre llegadas por derecha'
+	print 'Tiempos acumulado de vehiculos por derecha'
 	for d in right_list:
 		print d
-	print 'Tiempos entre llegadas por izquierda'
+	print 'Tiempos acumulado de vehiculos por izquierda'
 	for d in left_list:
 		print d
 
@@ -108,7 +108,7 @@ def graficar():
 
 def generar_dato_exponencial(lam):
 	r = random.random()
-	exp = -(1/lam)*(math.log(r))
+	exp = int(-(1/lam)*(math.log(r)))
 	return exp
 
 def unit_test_exponential_data_left():
