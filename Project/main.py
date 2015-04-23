@@ -108,7 +108,7 @@ def graficar():
 
 def generar_dato_exponencial(lam):
 	r = random.random()
-	exp = -(1/lam)*(math.log1p(r))
+	exp = -(1/lam)*(math.log(r))
 	return exp
 
 def unit_test_exponential_data_left():
