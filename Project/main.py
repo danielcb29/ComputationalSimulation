@@ -13,18 +13,24 @@ time_list = []
 left_list=[]
 right_list=[]
 def main():
-	global LEF,reloj
+	global LEF,reloj,left_list,right_list
 	LEF.put((0,'RV_1'))
 	LEF.put((0,'LCI'))
 	LEF.put((0,'LCD'))
 	reloj = ambosrojo #inicializacion de ambos semaforos en rojo
 	time_list.append((color_1,1,reloj)) #Se entiende que los dos semaforos inician en la fase ambosrojos
-	left_list.appen(0) #primer tiempo de llegada de carro por la izquierda
+	left_list.append(0) #primer tiempo de llegada de carro por la izquierda
 	right_list.append(0) #primer tiempo de llegada de carro por la derecha
 	while reloj<=7200:
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
 	graficar()
+	print 'Tiempos entre llegadas por derecha'
+	for d in right_list:
+		print d
+	print 'Tiempos entre llegadas por izquierda'
+	for d in left_list:
+		print d
 
 def ejecutar_evento(ev):
 	#EV = string of queue
