@@ -14,7 +14,7 @@ left_list=[]
 right_list=[]
 def main():
 	global LEF,reloj,left_list,right_list
-	LEF.put((0,'RV_1'))
+	LEF.put((0,'RV_I'))
 	llegada_izq=generar_dato_exponencial(0.03130)
 	llegada_der=generar_dato_exponencial(0.04585)
 	LEF.put((llegada_izq,'LCI'))
@@ -37,26 +37,26 @@ def main():
 def ejecutar_evento(ev):
 	#EV = string of queue
 	global color_2,color_1,LEF,faseverde_1,faseverde_2,ambosrojo,reloj,time_list,left_list,right_list
-	if ev=='RV_1':
+	if ev=='RV_I':
 		color_1='Verde'
 		reloj=faseverde_1+reloj
-		LEF.put((reloj,'VR_1'))
+		LEF.put((reloj,'VR_I'))
 		time_list.append((color_1,1,reloj))
-	elif ev=='VR_1':
+	elif ev=='VR_I':
 		color_1='Rojo'
 		reloj=ambosrojo+reloj
-		LEF.put((reloj,'RV_2'))
+		LEF.put((reloj,'RV_D'))
 		time_list.append((color_1,1,reloj))
 		time_list.append((color_2,2,reloj))
-	elif ev=='RV_2':
+	elif ev=='RV_D':
 		color_2='Verde'
 		reloj=faseverde_2+reloj
-		LEF.put((reloj,'VR_2'))
+		LEF.put((reloj,'VR_D'))
 		time_list.append((color_2,2,reloj))
-	elif ev=='VR_2':
+	elif ev=='VR_D':
 		color_2='Rojo'
 		reloj=ambosrojo+reloj
-		LEF.put((reloj,'RV_1'))
+		LEF.put((reloj,'RV_I'))
 		time_list.append((color_2,2,reloj))
 		time_list.append((color_1,1,reloj))
 	elif ev=='LCI':
