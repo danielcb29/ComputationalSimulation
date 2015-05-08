@@ -91,13 +91,13 @@ def ejecutar_evento(ev):
 			LEF.put((reloj, 'EPI')) #hora en que llega
 			epi_list.append(reloj)
 		if cola_puente.qsize()==1: #genera su propia salida
-			reloj = cola_puente.get() + random(65,75)
+			reloj = cola_puente.get() + random.uniform(65,75)
 			LEF.put((reloj, 'SPI'))
 			spi_list.append(reloj)
 	elif ev=='SPI':
 		#cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
 		if cola_puente.qsize()>0:
-			proxima_llegada = cola_puente.get()+random(65,75)
+			proxima_llegada = cola_puente.get()+random.uniform(65,75)
 			if proxima_llegada>=reloj+5:
 				reloj = proxima_llegada
 			else:
