@@ -1,7 +1,6 @@
-from Queue import *
+from Queue import PriorityQueue
 import pygal,random, math
 from pygal.style import Style
-
 color_1=color_2='Rojo'
 reloj=0
 LEF = PriorityQueue()
@@ -10,14 +9,9 @@ faseverde_2=70
 ambosrojo=50
 faserojo_1= faseverde_2+(2*ambosrojo)
 faserojo_2= faseverde_1+(2*ambosrojo)
-cola_sem_iz=0
-cola_sem_der=0
-cola_puente = Queue()
 time_list = []
 left_list=[]
 right_list=[]
-epi_list = []
-spi_list = []
 def main():
 	global LEF,reloj,left_list,right_list
 	LEF.put((ambosrojo,'RV_I'))
@@ -29,7 +23,6 @@ def main():
 	time_list.append((color_1,1,reloj)) #Se entiende que los dos semaforos inician en la fase ambosrojos
 	left_list.append(llegada_izq) #primer tiempo de llegada de carro por la izquierda
 	right_list.append(llegada_der) #primer tiempo de llegada de carro por la derecha
-
 	while reloj<=7200:
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
@@ -43,14 +36,10 @@ def main():
 
 def ejecutar_evento(ev):
 	#EV = string of queue
-	global color_2,color_1,LEF,faseverde_1,faseverde_2,ambosrojo,reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI, time_list, left_list, right_list, epi_list, spi_list
+	global color_2,color_1,LEF,faseverde_1,faseverde_2,ambosrojo,reloj,time_list,left_list,right_list
 	if ev=='RV_I':
 		color_1='Verde'
-		if cola_sem_iz>0:
-			LEF.put((reloj, 'EPI')) #se supone que no hay cola en el puente, en ese caso habria colision
-			epi_list.append(reloj)
-		cont_VI = faseverde_1
-		reloj=faseverde_1+reloj #generar tiempo vr_i
+		reloj=faseverde_1+reloj
 		LEF.put((reloj,'VR_I'))
 		time_list.append((color_1,1,reloj))
 	elif ev=='VR_I':
@@ -71,40 +60,13 @@ def ejecutar_evento(ev):
 		time_list.append((color_2,2,reloj))
 		time_list.append((color_1,1,reloj))
 	elif ev=='LCI':
-		cola_sem_iz+=1
-		if (color_1=='Verde')&(cola_puente.qsize()<30):
-			LEF.put((reloj, 'EPI'))
-			epi_list.append(reloj)
-		reloj += generar_dato_exponencial(0.03130) #generar tiempo de proxima llegada por izquierda
+		reloj += generar_dato_exponencial(0.03130)
 		LEF.put((reloj,'LCI'))
 		left_list.append(reloj)
 	elif ev=='LCD':
-		reloj += generar_dato_exponencial(0.04585) #generar proxima llegada por derecha
+		reloj += generar_dato_exponencial(0.04585)
 		LEF.put((reloj,'LCD'))
 		right_list.append(reloj)
-	elif ev=='EPI':
-		cola_sem_iz-=1
-		cola_puente.put(reloj)
-		cont_VI-=5
-		if (cont_VI>=5)&(cola_puente.qsize()<30)&(cola_sem_iz>0):
-			reloj+=5 #tiempo de proxima entrada al puente
-			LEF.put((reloj, 'EPI')) #hora en que llega
-			epi_list.append(reloj)
-		if cola_puente.qsize()==1: #genera su propia salida
-			reloj = cola_puente.get() + random(65,75)
-			LEF.put((reloj, 'SPI'))
-			spi_list.append(reloj)
-	elif ev=='SPI':
-		#cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
-		if cola_puente.qsize()>0:
-			proxima_llegada = cola_puente.get()+random(65,75)
-			if proxima_llegada>=reloj+5:
-				reloj = proxima_llegada
-			else:
-				reloj = reloj + 5
-			LEF.put((reloj, 'SPI'))
-			spi_list.append(reloj)
-
 
 def graficar():
 	global time_list
@@ -149,8 +111,6 @@ def generar_dato_exponencial(lam):
 	exp = int(-(1/lam)*(math.log(r)))
 	return exp
 
-
-'''
 def unit_test_exponential_data_left():
 	for i in range(0,1000): 
 		print generar_dato_exponencial(0.03130)
@@ -158,7 +118,7 @@ def unit_test_exponential_data_left():
 def unit_test_exponential_data_right():
 	for i in range(0,1000): 
 		print generar_dato_exponencial(0.04585) 
-'''
+
 main()
 #unit_test_exponential_data_left()
 #unit_test_exponential_data_right()
