@@ -57,6 +57,7 @@ def main():
 		ev = evento[1]
 		#print evento
 		ejecutar_evento(ev)
+		print ev, reloj
 	graficar()
 	#imrpimir_datos()
 	estudio_variables_desempeno()
@@ -204,6 +205,7 @@ def ejecutar_evento(ev):
 			cola_sem_der-=1
 
 def restaurar_variables():
+	global cola_puente_cont
 	cola_puente_cont=0
 def estudio_variables_desempeno():
 	#Promedio de carros por hora
