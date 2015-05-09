@@ -33,13 +33,9 @@ def main():
 	while reloj<=7200:
 		ev = LEF.get()[1]
 		ejecutar_evento(ev)
+		print ev, reloj
 	graficar()
-	print 'Tiempos acumulado de vehiculos por derecha'
-	for d in right_list:
-		print d
-	print 'Tiempos acumulado de vehiculos por izquierda'
-	for d in left_list:
-		print d
+	
 
 def ejecutar_evento(ev):
 	#EV = string of queue
@@ -91,13 +87,13 @@ def ejecutar_evento(ev):
 			LEF.put((reloj, 'EPI')) #hora en que llega
 			epi_list.append(reloj)
 		if cola_puente.qsize()==1: #genera su propia salida
-			reloj = cola_puente.get() + random(65,75)
+			reloj = cola_puente.get() + random.uniform(65,75)
 			LEF.put((reloj, 'SPI'))
 			spi_list.append(reloj)
 	elif ev=='SPI':
 		#cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
 		if cola_puente.qsize()>0:
-			proxima_llegada = cola_puente.get()+random(65,75)
+			proxima_llegada = cola_puente.get()+random.uniform(65,75)
 			if proxima_llegada>=reloj+5:
 				reloj = proxima_llegada
 			else:
@@ -160,5 +156,18 @@ def unit_test_exponential_data_right():
 		print generar_dato_exponencial(0.04585) 
 '''
 main()
+'''print 'Tiempos acumulado de vehiculos por derecha'
+for d in right_list:
+	print d'''
+print 'Tiempos acumulado de vehiculos por izquierda'
+for d in left_list:
+	print d
+print 'Tiempo de entrada al puente por izquierda'
+for d in epi_list: 
+	print d
+print 'Tiempo de salida del puente por izquierda'
+for d in spi_list: 
+	print d
+
 #unit_test_exponential_data_left()
 #unit_test_exponential_data_right()
