@@ -21,7 +21,7 @@ spi_list = []
 
 
 def main():
-    global LEF, reloj, left_list, right_list
+    global LEF, reloj, left_list, right_list,epi_list,spi_list
     LEF.put((ambosrojo, 'RV_I'))
     llegada_izq = generar_dato_exponencial(0.03130)
     llegada_der = generar_dato_exponencial(0.04585)
@@ -37,22 +37,22 @@ def main():
         reloj = evento[0]
         ev = evento[1]
         ejecutar_evento(ev)
-
-
     graficar()
-    print 'Tiempos acumulado de vehiculos por derecha'
-    for d in right_list:
-        print d
-    print 'Tiempos acumulado de vehiculos por izquierda'
-    for d in left_list:
-        print d
-    print 'Tiempo de entrada de puente izquierda'
+    imrpimir_datos()
+
+def imrpimir_datos():
+	#print 'Tiempos acumulado de vehiculos por derecha'
+    #for d in right_list:
+    #    print d
+	print 'Tiempos acumulado de vehiculos por izquierda'
+	for d in left_list:
+		print d
+	print 'Tiempo de entrada de puente izquierda'
 	for iz in epi_list:
 		print iz
 	print 'Tiempo de salida de puente izquierda'
 	for sal in spi_list:
 		print sal
-
 
 def ejecutar_evento(ev):
     # EV = string of queue
@@ -82,12 +82,12 @@ def ejecutar_evento(ev):
         time_list.append((color_1, 1, ambosrojo + reloj))
     elif ev == 'LCI':
         cola_sem_iz += 1
-        if (color_1 == 'Verde') & (cola_puente.qsize() < 30):
+        if (color_1 == 'Verde') & (cola_puente.qsize() < 30) & (cola_sem_iz == 1):
             LEF.put((reloj, 'EPI'))
             epi_list.append(reloj)
         #generar tiempo de proxima llegada por izquierda
         proxima_llegada = generar_dato_exponencial(0.03130) + reloj
-        LEF.put(proxima_llegada, 'LCI')
+        LEF.put((proxima_llegada, 'LCI'))
         left_list.append(proxima_llegada)
     elif ev == 'LCD':
          #generar proxima llegada por derecha
@@ -102,17 +102,19 @@ def ejecutar_evento(ev):
             LEF.put((reloj+5, 'EPI'))  #hora en que llega
             epi_list.append(reloj+5)
         if cola_puente.qsize() == 1:  #genera su propia salida
-            hora_salida = cola_puente.get() + int(random.uniform(65, 75), 'SPI')
-            LEF.put(hora_salida, 'SPI')
+            hora_salida = cola_puente.get() + int(random.uniform(65, 75)) 
+            LEF.put((hora_salida, 'SPI'))
             spi_list.append(hora_salida)
     elif ev == 'SPI':
         #cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
         if cola_puente.qsize() > 0:
-            proxima_llegada = cola_puente.get() + random.uniform(65, 75)
-            if proxima_llegada < reloj + 5:
-                proxima_llegada = reloj + 5
-            LEF.put(proxima_llegada, 'SPI')
-            spi_list.append(proxima_llegada)
+            proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
+            if proxima_salida < reloj + 5:
+                proxima_salida = reloj + 5
+            LEF.put((proxima_salida, 'SPI'))
+            spi_list.append(proxima_salida)
+		if (cola_sem_iz > 0) & (color_1 == 'Verde'):
+			LEF.put((reloj,'EPI'))
 
 
 def graficar():
