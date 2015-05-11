@@ -27,10 +27,10 @@ def main():
     #llegada_der = generar_dato_exponencial(0.04585)
     LEF.put((0, 'LCI'))
     LEF.put((0, 'LCD'))
-    reloj = ambosrojo  # inicializacion de ambos semaforos en rojo
-    time_list.append((color_1, 1, reloj))  # Se entiende que los dos semaforos inician en la fase ambosrojos
-    left_list.append(llegada_izq)  # primer tiempo de llegada de carro por la izquierda
-    right_list.append(llegada_der)  # primer tiempo de llegada de carro por la derecha
+    #reloj = ambosrojo  # inicializacion de ambos semaforos en rojo
+    #time_list.append((color_2, 2, reloj))  # Se entiende que los dos semaforos inician en la fase ambosrojos
+    left_list.append(0)  # primer tiempo de llegada de carro por la izquierda
+    right_list.append(0)  # primer tiempo de llegada de carro por la derecha
 
     while reloj <= 7200:
         evento = LEF.get()
