@@ -18,7 +18,7 @@ left_list = []
 right_list = []
 epi_list = []
 spi_list = []
-
+cola_puente_cont=0
 
 def main():
     global LEF, reloj, left_list, right_list,epi_list,spi_list
@@ -56,7 +56,7 @@ def imrpimir_datos():
 
 def ejecutar_evento(ev):
     # EV = string of queue
-    global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI, time_list, left_list, right_list, epi_list, spi_list
+    global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont
     if ev == 'RV_I':
         color_1 = 'Verde'
         if cola_sem_iz > 0:
@@ -82,7 +82,8 @@ def ejecutar_evento(ev):
         time_list.append((color_1, 1, ambosrojo + reloj))
     elif ev == 'LCI':
         cola_sem_iz += 1
-        if (color_1 == 'Verde') & (cola_puente.qsize() < 30) & (cola_sem_iz == 1):
+        #if (color_1 == 'Verde') & (cola_puente.qsize() < 30) & (cola_sem_iz == 1):
+        if (color_1 == 'Verde') & (cola_puente_cont < 30) & (cola_sem_iz == 1):
             LEF.put((reloj, 'EPI'))
             epi_list.append(reloj)
         #generar tiempo de proxima llegada por izquierda
@@ -96,18 +97,22 @@ def ejecutar_evento(ev):
     elif ev == 'EPI':
         cola_sem_iz -= 1
         cola_puente.put(reloj)
+        cola_puente_cont += 1
         cont_VI -= 5
-        if (cont_VI >= 5) & (cola_puente.qsize() < 30) & (cola_sem_iz > 0):
+        #if (cont_VI >= 5) & (cola_puente.qsize() < 30) & (cola_sem_iz > 0):
+        if (cont_VI >= 5) & (cola_puente_cont < 30) & (cola_sem_iz > 0):
             #tiempo de proxima entrada al puente
             LEF.put((reloj+5, 'EPI'))  #hora en que llega
             epi_list.append(reloj+5)
-        if cola_puente.qsize() == 1:  #genera su propia salida
+        if cola_puente_cont == 1:  #genera su propia salida
             hora_salida = cola_puente.get() + int(random.uniform(65, 75)) 
             LEF.put((hora_salida, 'SPI'))
             spi_list.append(hora_salida)
     elif ev == 'SPI':
         #cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
-		if cola_puente.qsize() > 0:
+		cola_puente_cont -=1
+		#if cola_puente.qsize() > 0:
+		if cola_puente_cont > 0:
 			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
 			if proxima_salida < reloj + 5:
 				proxima_salida = reloj + 5
