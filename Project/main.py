@@ -107,14 +107,15 @@ def ejecutar_evento(ev):
             spi_list.append(hora_salida)
     elif ev == 'SPI':
         #cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
-        if cola_puente.qsize() > 0:
-            proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
-            if proxima_salida < reloj + 5:
-                proxima_salida = reloj + 5
-            LEF.put((proxima_salida, 'SPI'))
-            spi_list.append(proxima_salida)
+		if cola_puente.qsize() > 0:
+			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
+			if proxima_salida < reloj + 5:
+				proxima_salida = reloj + 5
+			LEF.put((proxima_salida, 'SPI'))
+			spi_list.append(proxima_salida)
 		if (cola_sem_iz > 0) & (color_1 == 'Verde'):
 			LEF.put((reloj,'EPI'))
+			epi_list.append(reloj)
 
 
 def graficar():
