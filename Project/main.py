@@ -57,7 +57,6 @@ def main():
 		ev = evento[1]
 		#print evento
 		ejecutar_evento(ev)
-		print ev, reloj
 	graficar()
 	#imrpimir_datos()
 	estudio_variables_desempeno()
