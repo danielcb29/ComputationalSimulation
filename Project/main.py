@@ -152,9 +152,7 @@ def generar_dato_exponencial(lam):
     r = random.random()
     exp = int(-(1 / lam) * (math.log(r)))
     return exp
-
-
-'''
+    
 def unit_test_exponential_data_left():
 	for i in range(0,1000): 
 		print generar_dato_exponencial(0.03130)
@@ -162,7 +160,7 @@ def unit_test_exponential_data_left():
 def unit_test_exponential_data_right():
 	for i in range(0,1000): 
 		print generar_dato_exponencial(0.04585) 
-'''
+
 main()
 # unit_test_exponential_data_left()
 #unit_test_exponential_data_right()
