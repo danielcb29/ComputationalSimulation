@@ -46,6 +46,12 @@ def main():
     print 'Tiempos acumulado de vehiculos por izquierda'
     for d in left_list:
         print d
+    print 'Tiempo de entrada de puente izquierda'
+	for iz in epi_list:
+		print iz
+	print 'Tiempo de salida de puente izquierda'
+	for sal in spi_list:
+		print sal
 
 
 def ejecutar_evento(ev):
