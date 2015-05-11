@@ -22,11 +22,11 @@ spi_list = []
 
 def main():
     global LEF, reloj, left_list, right_list,epi_list,spi_list
-    LEF.put((ambosrojo, 'RV_I'))
-    llegada_izq = generar_dato_exponencial(0.03130)
-    llegada_der = generar_dato_exponencial(0.04585)
-    LEF.put((llegada_izq, 'LCI'))
-    LEF.put((llegada_der, 'LCD'))
+    LEF.put((0, 'VR_D'))
+    #llegada_izq = generar_dato_exponencial(0.03130)
+    #llegada_der = generar_dato_exponencial(0.04585)
+    LEF.put((0, 'LCI'))
+    LEF.put((0, 'LCD'))
     reloj = ambosrojo  # inicializacion de ambos semaforos en rojo
     time_list.append((color_1, 1, reloj))  # Se entiende que los dos semaforos inician en la fase ambosrojos
     left_list.append(llegada_izq)  # primer tiempo de llegada de carro por la izquierda
