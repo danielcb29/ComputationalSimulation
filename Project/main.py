@@ -20,20 +20,22 @@ epi_list = []
 spi_list = []
 def main():
 	global LEF,reloj,left_list,right_list
-	LEF.put((ambosrojo,'RV_I'))
+	LEF.put((0,'VR_D'))  #inicializacion de ambos semaforos en rojo
 	llegada_izq=generar_dato_exponencial(0.03130)
 	llegada_der=generar_dato_exponencial(0.04585)
-	LEF.put((llegada_izq,'LCI'))
-	LEF.put((llegada_der,'LCD'))
-	reloj = ambosrojo #inicializacion de ambos semaforos en rojo
-	time_list.append((color_1,1,reloj)) #Se entiende que los dos semaforos inician en la fase ambosrojos
-	left_list.append(llegada_izq) #primer tiempo de llegada de carro por la izquierda
-	right_list.append(llegada_der) #primer tiempo de llegada de carro por la derecha
+	LEF.put((0,'LCI'))
+	LEF.put((0,'LCD'))
+	reloj = 0 #inicializacion de reloj
+	#time_list.append((color_1,1,ambosrojo)) #Se entiende que los dos semaforos inician en la fase ambosrojos
+	left_list.append(0) #primer tiempo de llegada de carro por la izquierda
+	right_list.append(0) #primer tiempo de llegada de carro por la derecha
 
 	while reloj<=7200:
-		ev = LEF.get()[1]
+		evento_con_hora =  LEF.get()
+		ev = evento_con_hora[1]
+		hor = evento_con_hora[0]
+		print ev, hor
 		ejecutar_evento(ev)
-		print ev, reloj
 	graficar()
 	
 
@@ -87,13 +89,13 @@ def ejecutar_evento(ev):
 			LEF.put((reloj, 'EPI')) #hora en que llega
 			epi_list.append(reloj)
 		if cola_puente.qsize()==1: #genera su propia salida
-			reloj = cola_puente.get() + random.uniform(65,75)
+			reloj = cola_puente.get() + int(random.uniform(65,75))
 			LEF.put((reloj, 'SPI'))
 			spi_list.append(reloj)
 	elif ev=='SPI':
 		#cola_puente.get() como hago para si es el primero, para extraerlo y que se vaya del puente
 		if cola_puente.qsize()>0:
-			proxima_llegada = cola_puente.get()+random.uniform(65,75)
+			proxima_llegada = cola_puente.get()+int(random.uniform(65,75))
 			if proxima_llegada>=reloj+5:
 				reloj = proxima_llegada
 			else:
