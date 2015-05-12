@@ -35,7 +35,6 @@ def main():
 	while reloj <= 7200:
 		evento = LEF.get()
 		reloj = evento[0]
-		print evento
 		ev = evento[1]
 		ejecutar_evento(ev)
 	graficar()
