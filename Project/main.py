@@ -4,6 +4,7 @@ from pygal.style import Style
 
 color_1 = color_2 = 'Rojo'
 reloj = 0
+tiempo_simulacion = 7200
 LEF = PriorityQueue()
 faseverde_1 = 100
 faseverde_2 = 70
@@ -24,21 +25,26 @@ cola_puente_cont=0
 cont_VD=0
 cont_VI=0
 
+#Variables de desempeno
+cont_salida_puente = 0
+
+
 def main():
-	global LEF, reloj
+	global LEF, reloj, tiempo_simulacion
 	LEF.put((0, 'VR_D'))
 	LEF.put((0, 'LCI'))
 	LEF.put((0, 'LCD'))
 	left_list.append(0)  # primer tiempo de llegada de carro por la izquierda
 	right_list.append(0)  # primer tiempo de llegada de carro por la derecha
 
-	while reloj <= 7200:
+	while reloj <= tiempo_simulacion:
 		evento = LEF.get()
 		reloj = evento[0]
 		ev = evento[1]
 		ejecutar_evento(ev)
 	graficar()
-	imrpimir_datos()
+	#imrpimir_datos()
+	estudio_variables_desempeno()
 
 def imrpimir_datos():
 	print 'Tiempos acumulado de vehiculos por izquierda'
@@ -63,7 +69,7 @@ def imrpimir_datos():
 
 def ejecutar_evento(ev):
 	# EV = string of queue
-	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list
+	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente
 	if ev == 'RV_I':
 		color_1 = 'Verde'
 		if cola_sem_iz > 0:
@@ -137,6 +143,7 @@ def ejecutar_evento(ev):
 			spd_list.append(hora_salida)            
 	elif ev == 'SPI':
 		cola_puente_cont -=1
+		cont_salida_puente+=1
 		if cola_puente_cont > 0:
 			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
 			if proxima_salida < reloj + 5:
@@ -148,6 +155,7 @@ def ejecutar_evento(ev):
 			epi_list.append(reloj)
 	elif ev == 'SPD':
 		cola_puente_cont-=1
+		cont_salida_puente+=1
 		if cola_puente_cont > 0:
 			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
 			if proxima_salida < reloj + 5:
@@ -159,6 +167,11 @@ def ejecutar_evento(ev):
 			epd_list.append(reloj)
 
 
+def estudio_variables_desempeno():
+	#Promedio de carros por hora
+	global cont_salida_puente
+	prom_carros_hora = float(cont_salida_puente) / (tiempo_simulacion/3600)
+	print 'Pormedio de carros que pasan por hora',prom_carros_hora
 def graficar():
     global time_list
     colors = []
