@@ -27,7 +27,10 @@ cont_VI=0
 
 #Variables de desempeno
 cont_salida_puente = 0
-
+cont_tam_cola_iz=0
+list_cola_iz =[] 
+cont_tam_cola_der=0
+list_cola_der=[]
 
 def main():
 	global LEF, reloj, tiempo_simulacion
@@ -69,7 +72,7 @@ def imrpimir_datos():
 
 def ejecutar_evento(ev):
 	# EV = string of queue
-	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente
+	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente, cont_tam_cola_iz,cont_tam_cola_der,list_cola_iz,list_cola_der
 	if ev == 'RV_I':
 		color_1 = 'Verde'
 		if cola_sem_iz > 0:
@@ -80,9 +83,12 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_1 + reloj, 'VR_I'))
 		time_list.append((color_1, 1, faseverde_1 + reloj ))
 	elif ev == 'VR_I':
+		list_cola_iz.append(cont_tam_cola_iz)# VD TAM COLA IZ
+		cont_tam_cola_iz = 0 #VD TAM COLA IZ
 		color_1 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_D'))
 		time_list.append((color_1, 1, ambosrojo + reloj))
+
 	elif ev == 'RV_D':
 		color_2 = 'Verde'
 		if cola_sem_der > 0:
@@ -93,11 +99,14 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_2 + reloj, 'VR_D'))
 		time_list.append((color_2, 2, faseverde_2 + reloj))
 	elif ev == 'VR_D':
+		list_cola_der.append(cont_tam_cola_der) #VD TAM COLA DER
+		cont_tam_cola_der=0 # VD TAM COLA DER
 		color_2 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_I'))
 		time_list.append((color_2, 2, ambosrojo + reloj))
 		time_list.append((color_1, 1, ambosrojo + reloj))
 	elif ev == 'LCI':
+		cont_tam_cola_iz+=1 # VD TAM COLA IZ
 		cola_sem_iz += 1
 		if (color_1 == 'Verde') & (cola_puente_cont < 30) & (cola_sem_iz == 1):
 			LEF.put((reloj, 'EPI'))
@@ -107,6 +116,7 @@ def ejecutar_evento(ev):
 		LEF.put((proxima_llegada, 'LCI'))
 		left_list.append(proxima_llegada)
 	elif ev == 'LCD':
+		cont_tam_cola_der+=1 # VD TAM COLA DER
 		cola_sem_der+=1
 		if (color_2 == 'Verde') & (cola_puente_cont < 30) & (cola_sem_der == 1):
 			LEF.put((reloj, 'EPD'))
@@ -143,7 +153,7 @@ def ejecutar_evento(ev):
 			spd_list.append(hora_salida)            
 	elif ev == 'SPI':
 		cola_puente_cont -=1
-		cont_salida_puente+=1
+		cont_salida_puente+=1 #VD PROM CARROS
 		if cola_puente_cont > 0:
 			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
 			if proxima_salida < reloj + 5:
@@ -155,7 +165,7 @@ def ejecutar_evento(ev):
 			epi_list.append(reloj)
 	elif ev == 'SPD':
 		cola_puente_cont-=1
-		cont_salida_puente+=1
+		cont_salida_puente+=1 # VD PROM CARROS
 		if cola_puente_cont > 0:
 			proxima_salida = cola_puente.get() + int(random.uniform(65, 75))
 			if proxima_salida < reloj + 5:
@@ -169,9 +179,24 @@ def ejecutar_evento(ev):
 
 def estudio_variables_desempeno():
 	#Promedio de carros por hora
-	global cont_salida_puente
+	global cont_salida_puente,list_cola_der,list_cola_iz
 	prom_carros_hora = float(cont_salida_puente) / (tiempo_simulacion/3600)
 	print 'Pormedio de carros que pasan por hora',prom_carros_hora
+	#Tamano promedio cola
+	#izq
+	prom_cola_iz = 0.0
+	for d in list_cola_iz: 
+		prom_cola_iz+=d
+	if len(list_cola_iz): 
+		prom_cola_iz/=len(list_cola_iz) 
+	print 'Tamano promedio cola izquierda',prom_cola_iz
+	#der
+	prom_cola_der = 0.0
+	for d in list_cola_der: 
+		prom_cola_der+=d
+	if len(list_cola_der): 
+		prom_cola_der/=len(list_cola_der) 
+	print 'Tamano promedio cola derecha',prom_cola_der
 def graficar():
     global time_list
     colors = []
