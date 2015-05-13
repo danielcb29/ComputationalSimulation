@@ -35,9 +35,10 @@ tiempo_llegada_iz = PriorityQueue()
 tiempo_llegada_der = PriorityQueue()
 tiempo_espera_iz=[]
 tiempo_espera_der=[]
+numero_colisiones=0
 
-cont_ll=0
-cont_ent=0
+#cont_ll=0
+#cont_ent=0
 
 def main():
 	global LEF, reloj, tiempo_simulacion
@@ -80,9 +81,12 @@ def imrpimir_datos():
 
 def ejecutar_evento(ev):
 	# EV = string of queue
-	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente, cont_tam_cola_iz,cont_tam_cola_der,list_cola_iz,list_cola_der,tiempo_espera_iz,tiempo_espera_der,tiempo_llegada_iz,tiempo_llegada_der,cont_ll,cont_ent
+	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente, cont_tam_cola_iz,cont_tam_cola_der,list_cola_iz,list_cola_der,tiempo_espera_iz,tiempo_espera_der,tiempo_llegada_iz,tiempo_llegada_der,numero_colisiones#,cont_ll,cont_ent
 	if ev == 'RV_I':
 		color_1 = 'Verde'
+		if cola_puente_cont > 0:
+			numero_colisiones+=1
+			restaurar_variables()
 		if cola_sem_iz > 0:
 			LEF.put((reloj, 'EPI'))  #se supone que no hay cola en el puente, en ese caso habria colision
 			epi_list.append(reloj)
@@ -99,6 +103,9 @@ def ejecutar_evento(ev):
 		time_list.append((color_1, 1, ambosrojo + reloj))
 	elif ev == 'RV_D':
 		color_2 = 'Verde'
+		if cola_puente_cont > 0:
+			numero_colisiones+=1
+			restaurar_variables()
 		if cola_sem_der > 0:
 			LEF.put((reloj, 'EPD'))  #se supone que no hay cola en el puente, en ese caso habria colision
 			epd_list.append(reloj)
@@ -115,8 +122,6 @@ def ejecutar_evento(ev):
 		time_list.append((color_2, 2, ambosrojo + reloj))
 		time_list.append((color_1, 1, ambosrojo + reloj))
 	elif ev == 'LCI':
-		cont_ll+=1
-		print 'contador llegada:',cont_ll
 		tiempo_llegada_iz.put(reloj) #VD TIEMPO PROM ESPERA I
 		cont_tam_cola_iz+=1 # VD TAM COLA IZ
 		cola_sem_iz += 1
@@ -141,8 +146,6 @@ def ejecutar_evento(ev):
 		LEF.put((proxima_llegada, 'LCD'))
 		right_list.append(proxima_llegada)
 	elif ev == 'EPI':
-		cont_ent+=1
-		print 'contador entrada:',cont_ent
 		tiempo_espera_iz.append(reloj - tiempo_llegada_iz.get())#VD TIEMPO PROM ESPERA I
 		cola_puente.put(reloj)
 		cola_puente_cont += 1
@@ -197,12 +200,14 @@ def ejecutar_evento(ev):
 			epd_list.append(reloj)
 			cola_sem_der-=1
 
-
+def restaurar_variables():
+	cola_puente_cont=0
 def estudio_variables_desempeno():
 	#Promedio de carros por hora
-	global cont_salida_puente,list_cola_der,list_cola_iz,tiempo_espera_iz,tiempo_espera_der
+	global cont_salida_puente,list_cola_der,list_cola_iz,tiempo_espera_iz,tiempo_espera_der,numero_colisiones
 	prom_carros_hora = float(cont_salida_puente) / (tiempo_simulacion/3600)
 	print 'Pormedio de carros que pasan por hora',prom_carros_hora
+	
 	#Tamano promedio cola
 	#izq
 	prom_cola_iz = 0.0
@@ -218,6 +223,7 @@ def estudio_variables_desempeno():
 	if len(list_cola_der)>0: 
 		prom_cola_der/=len(list_cola_der) 
 	print 'Tamano promedio cola derecha',prom_cola_der
+	
 	#tiempo promedio de espera 
 	#iz
 	prom_espera_iz =0.0
@@ -233,6 +239,10 @@ def estudio_variables_desempeno():
 	if len(tiempo_espera_der)>0: 
 		prom_espera_der/=len(tiempo_espera_der)
 	print 'Tiempo promedio espera derecha',prom_espera_der
+	
+	#Numero de colisiones 
+	print 'Numero de colisiones en la simulacion',numero_colisiones
+
 def graficar():
     global time_list
     colors = []
