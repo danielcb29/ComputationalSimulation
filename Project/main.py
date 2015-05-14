@@ -84,6 +84,7 @@ def ejecutar_evento(ev):
 	global color_2, color_1, LEF, faseverde_1, faseverde_2, ambosrojo, reloj, cola_sem_iz, cola_sem_der, cola_puente, cont_VI,cont_VD, time_list, left_list, right_list, epi_list, spi_list,cola_puente_cont,epd_list,spd_list,cont_salida_puente, cont_tam_cola_iz,cont_tam_cola_der,list_cola_iz,list_cola_der,tiempo_espera_iz,tiempo_espera_der,tiempo_llegada_iz,tiempo_llegada_der,numero_colisiones#,cont_ll,cont_ent
 	if ev == 'RV_I':
 		color_1 = 'Verde'
+		list_cola_iz.append(cont_tam_cola_iz)# VD TAM COLA IZ
 		if cola_puente_cont > 0:
 			numero_colisiones+=1
 			restaurar_variables()
@@ -96,13 +97,14 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_1 + reloj, 'VR_I'))
 		time_list.append((color_1, 1, faseverde_1 + reloj ))
 	elif ev == 'VR_I':
-		list_cola_iz.append(cont_tam_cola_iz)# VD TAM COLA IZ
+		
 		cont_tam_cola_iz = 0 #VD TAM COLA IZ
 		color_1 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_D'))
 		time_list.append((color_1, 1, ambosrojo + reloj))
 	elif ev == 'RV_D':
 		color_2 = 'Verde'
+		list_cola_der.append(cont_tam_cola_der) #VD TAM COLA DER
 		if cola_puente_cont > 0:
 			numero_colisiones+=1
 			restaurar_variables()
@@ -115,7 +117,7 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_2 + reloj, 'VR_D'))
 		time_list.append((color_2, 2, faseverde_2 + reloj))
 	elif ev == 'VR_D':
-		list_cola_der.append(cont_tam_cola_der) #VD TAM COLA DER
+		
 		cont_tam_cola_der=0 # VD TAM COLA DER
 		color_2 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_I'))
