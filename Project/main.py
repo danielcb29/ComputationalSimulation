@@ -97,8 +97,7 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_1 + reloj, 'VR_I'))
 		time_list.append((color_1, 1, faseverde_1 + reloj ))
 	elif ev == 'VR_I':
-		
-		cont_tam_cola_iz = 0 #VD TAM COLA IZ
+		cont_tam_cola_iz = cola_sem_iz #VD TAM COLA IZ
 		color_1 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_D'))
 		time_list.append((color_1, 1, ambosrojo + reloj))
@@ -117,8 +116,7 @@ def ejecutar_evento(ev):
 		LEF.put((faseverde_2 + reloj, 'VR_D'))
 		time_list.append((color_2, 2, faseverde_2 + reloj))
 	elif ev == 'VR_D':
-		
-		cont_tam_cola_der=0 # VD TAM COLA DER
+		cont_tam_cola_der=cola_sem_der # VD TAM COLA DER
 		color_2 = 'Rojo'
 		LEF.put((ambosrojo + reloj, 'RV_I'))
 		time_list.append((color_2, 2, ambosrojo + reloj))
