@@ -1,0 +1,9 @@
+Fase verde izquierda: 100
+Fase verde derecha: 70
+Fase ambosrojo: 80
+Pormedio de carros que pasan por hora 262.5
+Tamano promedio cola izquierda 7.04545454545
+Tamano promedio cola derecha 15.8636363636
+Tiempo promedio espera izquierda 99.3049327354
+Tiempo promedio espera derecha 214.741830065
+Numero de colisiones en la simulacion 0

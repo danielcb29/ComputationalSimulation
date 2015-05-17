@@ -6,9 +6,9 @@ color_1 = color_2 = 'Rojo'
 reloj = 0
 tiempo_simulacion = 7200
 LEF = PriorityQueue()
-faseverde_1 = 500
-faseverde_2 = 400
-ambosrojo = 120
+faseverde_1 = 100
+faseverde_2 = 70
+ambosrojo = 80
 faserojo_1 = faseverde_2 + (2 * ambosrojo)
 faserojo_2 = faseverde_1 + (2 * ambosrojo)
 cola_sem_iz = 0
@@ -48,6 +48,9 @@ def main():
 	left_list.append(0)  # primer tiempo de llegada de carro por la izquierda
 	right_list.append(0)  # primer tiempo de llegada de carro por la derecha
 
+	print 'Fase verde izquierda:',faseverde_1
+	print 'Fase verde derecha:',faseverde_2
+	print 'Fase ambosrojo:',ambosrojo
 	while reloj <= tiempo_simulacion:
 		evento = LEF.get()
 		reloj = evento[0]
