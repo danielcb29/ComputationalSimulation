@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Queue import *
 import pygal, random, math
 from pygal.style import Style
@@ -6,9 +7,9 @@ color_1 = color_2 = 'Rojo'
 reloj = 0
 tiempo_simulacion = 7200
 LEF = PriorityQueue()
-faseverde_1 = 500
-faseverde_2 = 400
-ambosrojo = 120
+faseverde_1 = 100
+faseverde_2 = 126
+ambosrojo = 125
 faserojo_1 = faseverde_2 + (2 * ambosrojo)
 faserojo_2 = faseverde_1 + (2 * ambosrojo)
 cola_sem_iz = 0
@@ -37,6 +38,14 @@ tiempo_espera_iz=[]
 tiempo_espera_der=[]
 numero_colisiones=0
 
+#Listas variables de desempeno
+lis_carros = []
+lis_cola_izq = []
+lis_cola_der = []
+lis_esp_izq = []
+lis_esp_der = []
+lis_num_col = []
+
 #cont_ll=0
 #cont_ent=0
 
@@ -48,13 +57,16 @@ def main():
 	left_list.append(0)  # primer tiempo de llegada de carro por la izquierda
 	right_list.append(0)  # primer tiempo de llegada de carro por la derecha
 
+	# print 'Fase verde izquierda:',faseverde_1
+	# print 'Fase verde derecha:',faseverde_2
+	# print 'Fase ambosrojo:',ambosrojo
 	while reloj <= tiempo_simulacion:
 		evento = LEF.get()
 		reloj = evento[0]
 		ev = evento[1]
 		#print evento
 		ejecutar_evento(ev)
-	graficar()
+	#graficar()
 	#imrpimir_datos()
 	estudio_variables_desempeno()
 
@@ -201,13 +213,53 @@ def ejecutar_evento(ev):
 			cola_sem_der-=1
 
 def restaurar_variables():
+	global cola_puente_cont
 	cola_puente_cont=0
+
+def restaurar_variables_desempeno():
+	global cont_salida_puente, cont_tam_cola_iz, list_cola_iz, cont_tam_cola_der, list_cola_der, tiempo_llegada_iz, tiempo_llegada_der, tiempo_espera_iz, tiempo_espera_der, numero_colisiones
+	cont_salida_puente = 0
+	cont_tam_cola_iz=0
+	list_cola_iz =[]
+	cont_tam_cola_der=0
+	list_cola_der=[]
+	tiempo_llegada_iz = PriorityQueue()
+	tiempo_llegada_der = PriorityQueue()
+	tiempo_espera_iz=[]
+	tiempo_espera_der=[]
+	numero_colisiones=0
+
+def restaurar_variables_estado():
+	global color_1, color_2, reloj,tiempo_simulacion ,LEF , faseverde_1, faseverde_2, ambosrojo, faserojo_1, faserojo_2, faserojo_2, cola_sem_iz, cola_sem_der, cola_puente, time_list, left_list, right_list, epi_list, epd_list, spi_list, spd_list, cola_puente_cont, cont_VD, cont_VI
+	color_1 = color_2 = 'Rojo'
+	reloj = 0
+	tiempo_simulacion = tiempo_simulacion
+	LEF = PriorityQueue()
+	faseverde_1 = faseverde_1
+	faseverde_2 = faseverde_2
+	ambosrojo = ambosrojo
+	faserojo_1 = faseverde_2 + (2 * ambosrojo)
+	faserojo_2 = faseverde_1 + (2 * ambosrojo)
+	cola_sem_iz = 0
+	cola_sem_der = 0
+	cola_puente = Queue()
+	time_list = []
+	left_list = []
+	right_list = []
+	epi_list = []
+	spi_list = []
+	epd_list = []
+	spd_list = []
+	cola_puente_cont=0
+	cont_VD=0
+	cont_VI=0
+
 def estudio_variables_desempeno():
 	#Promedio de carros por hora
-	global cont_salida_puente,list_cola_der,list_cola_iz,tiempo_espera_iz,tiempo_espera_der,numero_colisiones
+	global cont_salida_puente,list_cola_der,list_cola_iz,tiempo_espera_iz,tiempo_espera_der,numero_colisiones, lis_carros, lis_cola_izq ,lis_cola_der ,lis_esp_izq ,lis_esp_der ,lis_num_col
 	prom_carros_hora = float(cont_salida_puente) / (tiempo_simulacion/3600)
-	print 'Pormedio de carros que pasan por hora',prom_carros_hora
-	
+	#print 'Pormedio de carros que pasan por hora',prom_carros_hora
+	lis_carros.append(prom_carros_hora)
 	#Tamano promedio cola
 	#izq
 	prom_cola_iz = 0.0
@@ -215,15 +267,16 @@ def estudio_variables_desempeno():
 		prom_cola_iz+=d
 	if len(list_cola_iz)>0: 
 		prom_cola_iz/=len(list_cola_iz) 
-	print 'Tamano promedio cola izquierda',prom_cola_iz
+	#print 'Tamano promedio cola izquierda',prom_cola_iz
+	lis_cola_izq.append(prom_cola_iz)
 	#der
 	prom_cola_der = 0.0
 	for d in list_cola_der: 
 		prom_cola_der+=d
 	if len(list_cola_der)>0: 
 		prom_cola_der/=len(list_cola_der) 
-	print 'Tamano promedio cola derecha',prom_cola_der
-	
+	#print 'Tamano promedio cola derecha',prom_cola_der
+	lis_cola_der.append(prom_cola_der)
 	#tiempo promedio de espera 
 	#iz
 	prom_espera_iz =0.0
@@ -231,17 +284,19 @@ def estudio_variables_desempeno():
 		prom_espera_iz+=tp
 	if len(tiempo_espera_iz)>0: 
 		prom_espera_iz/=len(tiempo_espera_iz)
-	print 'Tiempo promedio espera izquierda',prom_espera_iz
+	#print 'Tiempo promedio espera izquierda',prom_espera_iz
+	lis_esp_izq.append(prom_espera_iz)
 	#der
 	prom_espera_der =0.0
 	for tp in tiempo_espera_der:
 		prom_espera_der+=tp
 	if len(tiempo_espera_der)>0: 
 		prom_espera_der/=len(tiempo_espera_der)
-	print 'Tiempo promedio espera derecha',prom_espera_der
-	
+	#print 'Tiempo promedio espera derecha',prom_espera_der
+	lis_esp_der.append(prom_espera_der)
 	#Numero de colisiones 
-	print 'Numero de colisiones en la simulacion',numero_colisiones
+	#print 'Numero de colisiones en la simulacion',numero_colisiones
+	lis_num_col.append(numero_colisiones)
 
 def graficar():
     global time_list
@@ -292,9 +347,51 @@ def unit_test_exponential_data_left():
 		print generar_dato_exponencial(0.03130)
 
 def unit_test_exponential_data_right():
-	for i in range(0,1000): 
+	for i in range(0,1000):
 		print generar_dato_exponencial(0.04585) 
 
-main()
+
 # unit_test_exponential_data_left()
 #unit_test_exponential_data_right()
+
+for i in range (0,1000):
+	main()
+	restaurar_variables_desempeno()
+	restaurar_variables_estado()
+
+
+def intervalo_vars_des():
+	#carros que pasan por hora
+	prom_carros = float(reduce(lambda x, y: x + y, lis_carros))/ len(lis_carros)
+	lis_desv_carros = map(lambda x: (x - prom_carros)**2, lis_carros)
+	desv_carros = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_carros))/ (len(lis_desv_carros)-1))
+	print "La variable de desempeño promedio de carros que pasan por hora, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_carros," y una desviacion de: ", desv_carros
+	#Tamano promedio cola
+	#izq
+	prom_cola_izq = float(reduce(lambda x, y: x + y, lis_cola_izq)) / len(lis_cola_izq)
+	lis_desv_cola_izq = map(lambda x: (x - prom_cola_izq)**2, lis_cola_izq)
+	desv_cola_izq = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_cola_izq))/ (len(lis_desv_cola_izq)-1))
+	print "La variable de desempeño cola izquierda promedia, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_cola_izq," y una desviacion de: ", desv_cola_izq
+	#der
+	prom_cola_der = float(reduce(lambda x, y: x + y, lis_cola_der))/ len(lis_cola_der)
+	lis_desv_cola_der = map(lambda x: (x - prom_cola_der)**2, lis_cola_der)
+	desv_cola_der = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_cola_der))/ (len(lis_desv_cola_der)-1))
+	print "La variable de desempeño cola derecha promedia, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_cola_der," y una desviacion de: ", desv_cola_der
+	#tiempo promedio de espera
+	#iz
+	prom_esp_izq = float(reduce(lambda x, y: x + y, lis_esp_izq)) / len(lis_esp_izq)
+	lis_desv_esp_izq = map(lambda x: (x - prom_esp_izq)**2, lis_esp_izq)
+	desv_esp_izq = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_esp_izq))/ (len(lis_desv_esp_izq)-1))
+	print "La variable de desempeño espera izquierda promedia, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_esp_izq," y una desviacion de: ", desv_esp_izq
+	#der
+	prom_esp_der = float(reduce(lambda x, y: x + y, lis_esp_der)) / len(lis_esp_der)
+	lis_desv_esp_der = map(lambda x: (x - prom_esp_der)**2, lis_esp_der)
+	desv_esp_der = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_esp_der))/ (len(lis_desv_esp_der)-1))
+	print "La variable de desempeño espera derecha promedia, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_esp_der," y una desviacion de: ", desv_esp_der
+	#Numero de colisiones
+	prom_num_col = float(reduce(lambda x, y: x + y, lis_num_col)) / len(lis_num_col)
+	lis_desv_num_col = map(lambda x: (x - prom_num_col)**2, lis_num_col)
+	desv_num_col = math.sqrt(float(reduce(lambda x, y: x + y, lis_desv_num_col))/ (len(lis_desv_num_col)-1))
+	print "La variable de desempeño numero de colisiones, simulando 1000 repeticiones, 7200 segundos, tiene un promedio de:",prom_num_col," y una desviacion de: ", desv_num_col
+
+intervalo_vars_des()
